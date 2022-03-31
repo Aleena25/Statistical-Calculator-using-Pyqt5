@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QApplication, QRadioButton, QDialog, QGridLayout,
                              QGroupBox, QLabel, QLineEdit, QPushButton, QMessageBox)
 
-
+import numpy as np
 from scipy.stats.mstats import gmean
 import statistics
 
@@ -21,7 +21,7 @@ class Window(QDialog):
             Qt.WindowMaximizeButtonHint |
             Qt.WindowCloseButtonHint
         )  #This includes the minimize,maximise,close button in the title bar
-        self.setWindowTitle("Statistical Calculator")#Winow titel
+        self.setWindowTitle("Statistical Calculator")#Window titel
 
         
         #add connect options
@@ -144,8 +144,23 @@ class Window(QDialog):
         self.spLayout.addWidget(self.har_mean1L,11,0,1,1)
         self.spBox = QGroupBox('Statistics')
         self.spBox.setLayout(self.spLayout)
+    #Function find arithmetic mean
+    def mean(self,x):
+        m = sum(x)/len(x)#Sum divided by number 
+        return m
+    #Function for finding geometric_mean
+    def geometic_mean(self, x):
+        pro = np.prod(x)#Product of numbers
+        nth_root = (np.power(pro, (1/len(x))))#Nth root of product of N numbers
+        return nth_root
+    #Function to find harmonic mean
+    def harmonic_mean(self, x):
+        reciproc = np.reciprocal(x)#Finding reciprocal
+        sum_reciproc = sum(reciproc)#Sum of reciprocal
+        ha_mean = len(x)/sum_reciproc
+        return ha_mean
         
-        
+    
     def calculate(self):#Function for calculating the statistics
         #rint(int(self.sample.text()))
         x = list(map(float,self.sample.text().split(',')))
@@ -154,18 +169,18 @@ class Window(QDialog):
         self.range = max(x)-min(x)
         self.count = len(x)
         self.sum = sum(x)
-        self.Average = statistics.mean(x)
+        self.Average = self.mean(x)
         self.median = statistics.median(x)
-        try:
-            self.mode = statistics.mode(x)
-        except:
-                self.mode = str(x)
+       
+        self.mode = statistics.mode(x)
+        # except:
+        #         self.mode = str(x)
         self.SD = statistics.stdev(x)
         self.variance = statistics.variance(x)
-        self.geo_mean = gmean(x)
+        self.geo_mean = self.geometic_mean(x)
         self.geo_mean = self.geo_mean.item()
         #self.geo_mean = str(self.geo_mean)
-        self.har_mean = statistics.harmonic_mean(x)
+        self.har_mean = self.harmonic_mean(x)
         self.minimum1.setText(str(self.minimum))
         self.maximum1.setText(str(self.maximum))
         self.range1.setText(str(self.range))
